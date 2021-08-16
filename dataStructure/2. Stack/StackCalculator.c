@@ -3,7 +3,8 @@
 #pragma warning(disable:4996)
 #define SIZE 4
 typedef struct Equation{
-    char* data;
+    int operand;
+    char operation;
     struct Equation* link;
 }Equation;
 typedef struct info{
@@ -26,18 +27,19 @@ Equation* transfer(char* string){
     }
     for(int i = 0; i < strlen(string); i++){
         char c = string[i];
-        if(c == '+' || c == '-' || c == '*' || c == '/'){               // ex. a*b+c a¿Í *¸¦ ³ëµå·Î ¸¸µé¾î¼­ ´Ü¼ø ¿¬°á¸®½ºÆ®·Î ¿¬°á
-            newNode = (Equation*)malloc(sizeof(Equation));              // aºÎºÐ           
+        if(c == '+' || c == '-' || c == '*' || c == '/'){               // ex. a*b+c aì™€ *ë¥¼ ë…¸ë“œë¡œ ë§Œë“¤ì–´ì„œ ë‹¨ìˆœ ì—°ê²°ë¦¬ìŠ¤íŠ¸ë¡œ ì—°ê²°
+            newNode = (Equation*)malloc(sizeof(Equation));              // aë¶€ë¶„           
             if(!newNode){
                 printf("error");
                 return;
             }
-            for(int j = lastOperationIndex; j < i; j++)                 // a°¡ 10ÀÌ»óÀÏ °æ¿ì Àû¿ë¹æ¹ý
-                num = num*10 + string[j]-'0';
-            newNode->data = (char*)malloc(sizeof(char)*5);
-            itoa(num, newNode->data, 10);
-            newNode->link = NULL;
 
+            for(int j = lastOperationIndex; j < i; j++)                 // aê°€ 10ì´ìƒì¼ ê²½ìš° ì ìš©ë°©ë²•
+                num = num*10 + string[j]-'0';
+            newNode->operand = num;
+            newNode->operation = 0;
+
+            newNode->link = NULL;
             if(head->first == NULL){ 
                 head->first = newNode;
                 head->last = newNode;
@@ -45,31 +47,34 @@ Equation* transfer(char* string){
                 head->last->link = newNode;
                 head->last = newNode;
             }
-           
-            newNode = (Equation*)malloc(sizeof(Equation));              // *ºÎºÐ          
+
+            newNode = (Equation*)malloc(sizeof(Equation));              // *ë¶€ë¶„          
             if(!newNode){
                 printf("error");
                 return;
             }
-            newNode->data = string[i];
+
+            newNode->operand = 0;
+            newNode->operation = string[i];
             head->last->link = newNode;
             head->last = newNode;
+
             num = 0;
             lastOperationIndex = i+1;
         }
     }
-    for(int i = lastOperationIndex; i < strlen(string); i++){           // a, *, b, +±îÁö ³ëµå·Î ¸¸µé¸é c°¡ ³²±â¿¡ ³ëµå·Î ¸¸µé¾î ¿¬°áÇØÁØ´Ù.
+    for(int i = lastOperationIndex; i < strlen(string); i++){           // a, *, b, +ê¹Œì§€ ë…¸ë“œë¡œ ë§Œë“¤ë©´ cê°€ ë‚¨ê¸°ì— ë…¸ë“œë¡œ ë§Œë“¤ì–´ ì—°ê²°í•´ì¤€ë‹¤.
         newNode = (Equation*)malloc(sizeof(Equation));
         if(!newNode){
             printf("error");
             return;
         }
         for(int j = lastOperationIndex; j < i; j++)
-            num = num*10 + string[j];
-        newNode->data = (char*)malloc(sizeof(char) * 5);
-        itoa(num, newNode->data, 10);
-        newNode->link = NULL;
+            num = num*10 + string[j] - '0';
+        newNode->operand = num;
+        newNode->operation = 0;
 
+        newNode->link = NULL;
         head->last->link = newNode;
         head->last = newNode;
     }
@@ -85,11 +90,14 @@ int main() {
     for(int i = 0; i < SIZE; i++){
         equationStack[i] = (EquationInfo*)malloc(sizeof(EquationInfo));
         init(equationStack[i]);
-        equationStack[i] = transfer(string[i]);                         // ÁßÀ§ Ç¥Çö½Ä -> ÈÄÀ§ Ç¥Çö½Ä
+        equationStack[i] = transfer(string[i]);                         // ì¤‘ìœ„ í‘œí˜„ì‹ -> í›„ìœ„ í‘œí˜„ì‹
     }
 
-    for(Equation* i = equationStack[0]->first; i; i = i->link)
-        printf("%s¿Õ ", i->data);
+    for (Equation* i = equationStack[0]->first; i; i = i->link) {
+        if (i->operation == 0) printf("%d ", i->operand);
+        else printf("%c ", i->operation);
+    }
+        
 
     for(int i = 0; i < SIZE; i++)
         //printf("%d : %d\n",i+1, calculate(equationStack[i]));
