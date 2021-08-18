@@ -1,2 +1,6 @@
 ## tmp파일은 임시 실행 파일##
 tmp/
+
+## 임시 제외
+StackCalculator.c
+
