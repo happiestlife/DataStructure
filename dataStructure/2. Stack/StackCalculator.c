@@ -2,54 +2,102 @@
 #include<stdlib.h>
 #pragma warning(disable:4996)
 #define SIZE 4
-typedef struct Equation{
+typedef struct Equation {        // °¢ Ç×¿¡ ´ëÇÑ Á¤º¸
     int operand;
     char operation;
     struct Equation* link;
 }Equation;
-typedef struct info{
+typedef struct {                // ÈÄÀ§ Ç¥ÇöÀ¸·Î º¯È¯ÇÑ ½Ä
     struct Equation* first;
     struct Equation* last;
 }EquationInfo;
 
-void init(EquationInfo* head){
+typedef struct StackData {       // ½ºÅÃ¾È °¢ µ¥ÀÌÅÍ
+    char Soperation;
+    struct StackData* llink;    // °¡Àå ¾Æ·§´ÜÀ» ÀÇ¹Ì
+    struct StackData* rlink;    // °¡Àå À­´ÜÀ» ÀÇ¹Ì
+}StackData;
+typedef struct StackInfo {      // ½ºÅÃ Á¤º¸
+    struct StackData* first;
+    struct StackData* last;
+}StackInfo;
+void push(StackInfo* head, char operation) {
+    StackData* newNode = (StackData*)malloc(sizeof(StackData));
+    if (!newNode) {
+        printf("error\n");
+        return;
+    }
+
+    newNode->Soperation = operation;
+
+    if (head == NULL) {
+        head->first = head->last = newNode;
+        newNode->rlink = newNode->llink = NULL;
+    }
+    else {
+        head->last->rlink = newNode;
+        newNode->llink = head->last;
+        head->last = newNode;
+        newNode->rlink = NULL;
+    }
+}
+void pop(StackInfo* stackInfo) {
+    if (stackInfo->first == NULL) {
+        printf("no data\n");
+        return;
+    }
+    StackData* tmp = stackInfo->last;
+    stackInfo->last = tmp->llink;
+    free(tmp);
+}
+
+void init(EquationInfo* head) {
     head->first = head->last = NULL;
 }
-Equation* transfer(char* string){
+Equation* transfer(char* string) {
     int num = 0;
     int lastOperationIndex = 0;
     Equation* newNode = NULL;
-    EquationInfo* head = (EquationInfo*)malloc(sizeof(EquationInfo));
+    EquationInfo* head = (EquationInfo*)malloc(sizeof(EquationInfo));      // ÈÄÀ§Ç¥Çö½Ä
     head->first = head->last = NULL;
-    if(!head){
+    if (!head) {
         printf("error");
         return;
     }
-    for(int i = 0; i < strlen(string); i++){
+    StackData* newStackNode = NULL;
+    StackInfo* stackHead = (StackInfo*)malloc(sizeof(StackInfo));          // ÈÄÀ§Ç¥Çö½ÄÀ» ¸¸µé±â À§ÇÑ ½ºÅÃ
+    if (!stackHead) {
+        printf("error");
+        return;
+    }
+    stackHead->first = stackHead->last = NULL;
+
+    for (int i = 0; i < strlen(string); i++) {
         char c = string[i];
-        if(c == '+' || c == '-' || c == '*' || c == '/'){               // ex. a*b+c aì™€ *ë¥¼ ë…¸ë“œë¡œ ë§Œë“¤ì–´ì„œ ë‹¨ìˆœ ì—°ê²°ë¦¬ìŠ¤íŠ¸ë¡œ ì—°ê²°
-            newNode = (Equation*)malloc(sizeof(Equation));              // aë¶€ë¶„           
-            if(!newNode){
+        if (c == '+' || c == '-' || c == '*' || c == '/') {               // ex. a*b+c a¿Í *¸¦ ³ëµå·Î ¸¸µé¾î¼­ ´Ü¼ø ¿¬°á¸®½ºÆ®·Î ¿¬°á
+            newNode = (Equation*)malloc(sizeof(Equation));              // aºÎºÐ           
+            if (!newNode) {
                 printf("error");
                 return;
             }
 
-            for(int j = lastOperationIndex; j < i; j++)                 // aê°€ 10ì´ìƒì¼ ê²½ìš° ì ìš©ë°©ë²•
-                num = num*10 + string[j]-'0';
+            for (int j = lastOperationIndex; j < i; j++)                 // a°¡ 10ÀÌ»óÀÏ °æ¿ì Àû¿ë¹æ¹ý
+                num = num * 10 + string[j] - '0';
             newNode->operand = num;
             newNode->operation = 0;
 
             newNode->link = NULL;
-            if(head->first == NULL){ 
+            if (head->first == NULL) {
                 head->first = newNode;
                 head->last = newNode;
-            } else{
+            }
+            else {
                 head->last->link = newNode;
                 head->last = newNode;
             }
 
-            newNode = (Equation*)malloc(sizeof(Equation));              // *ë¶€ë¶„          
-            if(!newNode){
+            newNode = (Equation*)malloc(sizeof(Equation));              // *ºÎºÐ          
+            if (!newNode) {
                 printf("error");
                 return;
             }
@@ -60,47 +108,49 @@ Equation* transfer(char* string){
             head->last = newNode;
 
             num = 0;
-            lastOperationIndex = i+1;
+            lastOperationIndex = i + 1;
         }
     }
-    for(int i = lastOperationIndex; i < strlen(string); i++){           // a, *, b, +ê¹Œì§€ ë…¸ë“œë¡œ ë§Œë“¤ë©´ cê°€ ë‚¨ê¸°ì— ë…¸ë“œë¡œ ë§Œë“¤ì–´ ì—°ê²°í•´ì¤€ë‹¤.
-        newNode = (Equation*)malloc(sizeof(Equation));
-        if(!newNode){
-            printf("error");
-            return;
-        }
-        for(int j = lastOperationIndex; j < i; j++)
-            num = num*10 + string[j] - '0';
-        newNode->operand = num;
-        newNode->operation = 0;
+    for (int i = lastOperationIndex; i < strlen(string); i++)            // a, *, b, +±îÁö ³ëµå·Î ¸¸µé¸é c°¡ ³²±â¿¡ ³ëµå·Î ¸¸µé¾î ¿¬°áÇØÁØ´Ù.
+        num = num * 10 + string[i] - '0';
 
-        newNode->link = NULL;
-        head->last->link = newNode;
-        head->last = newNode;
+    newNode = (Equation*)malloc(sizeof(Equation));
+    if (!newNode) {
+        printf("error");
+        return;
     }
+    newNode->operand = num;
+    newNode->operation = 0;
+
+    newNode->link = NULL;
+    head->last->link = newNode;
+    head->last = newNode;
+
     return head;
 }
-int calculate(Equation* expression){
+int calculate(Equation* expression) {
 
 }
 int main() {
-    char* string[] = {"10*20+30", "10+20*30", "(10+20)*30", "((10+20)*(30+40))"};
+    char* string[] = { "10*20+30", "10+20*30", "(10+20)*30", "((10+20)*(30+40))" };
     EquationInfo* equationStack[SIZE];
     int result[SIZE];
-    for(int i = 0; i < SIZE; i++){
+    for (int i = 0; i < SIZE; i++) {
         equationStack[i] = (EquationInfo*)malloc(sizeof(EquationInfo));
         init(equationStack[i]);
-        equationStack[i] = transfer(string[i]);                         // ì¤‘ìœ„ í‘œí˜„ì‹ -> í›„ìœ„ í‘œí˜„ì‹
+        equationStack[i] = transfer(string[i]);                         // ÁßÀ§ Ç¥Çö½Ä -> ÈÄÀ§ Ç¥Çö½Ä
+    }
+    for (int i = 0; i < 4; i++) {
+        for (Equation* j = equationStack[i]->first; j; j = j->link) {
+            if (j->operation == 0) printf("%d ", j->operand);
+            else printf("%c ", j->operation);
+        }
+        printf("\n");
     }
 
-    for (Equation* i = equationStack[0]->first; i; i = i->link) {
-        if (i->operation == 0) printf("%d ", i->operand);
-        else printf("%c ", i->operation);
-    }
-        
 
-    for(int i = 0; i < SIZE; i++)
+    for (int i = 0; i < SIZE; i++)
         //printf("%d : %d\n",i+1, calculate(equationStack[i]));
 
-    return 0;
+        return 0;
 }
