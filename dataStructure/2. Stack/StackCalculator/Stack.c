@@ -34,6 +34,7 @@ char pop(StackInfo* stackInfo) {
     char data = tmp->Soperation;
     stackInfo->last = tmp->llink;
     if (stackInfo->last == NULL) stackInfo->first = NULL;
+    else     stackInfo->last->rlink = NULL;
     free(tmp);
     return data;
 }
