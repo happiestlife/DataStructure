@@ -1,6 +1,9 @@
 #include"DataStructure.h"
 #include"Stack.h"
 #include"MakePostfix.h"
+void init(EquationInfo* head) {
+    head->first = head->last = NULL;
+}
 int calculate(Equation* expression){
 
 }
