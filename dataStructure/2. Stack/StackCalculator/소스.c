@@ -12,12 +12,6 @@ int main() {
         equations[i] = (EquationInfo*)malloc(sizeof(EquationInfo));
         init(equations[i]);
         equations[i] = transfer(string[i]);                         // 중위 표현식 -> 후위 표현식
-        printf("\n");
-        for (Equation* j = equations[i]->first; j; j = j->link) {
-            if (j->operator == 0) printf("%d ", j->operand);
-            else printf("%c ", j->operator);
-        }
-        printf("\n\n");
     }
     for (int i = 0; i < 4; i++) {
         for (Equation* j = equations[i]->first; j; j = j->link) {
