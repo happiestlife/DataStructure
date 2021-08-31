@@ -38,8 +38,11 @@ void search(Tree* root, int data){
 }
 
 void delete(Tree* root, Tree* parent, int data) {
+    if (root == NULL) {
+        printf("there is no data\n");
+        return;
+    }
     if (root->data == data) {
-        // �ܸ������ ���
         if (root->left == NULL && root->right == NULL) {
             if (parent->data > root->data)
                 parent->left = NULL;
@@ -48,53 +51,44 @@ void delete(Tree* root, Tree* parent, int data) {
             free(root);
             return;
         }
-        // ���� �ڽĳ�尡 ����ִ� ���
         else if (root->left == NULL) {
             if (parent == NULL) root = root->right;
             else {
-                int newData = root->right->data;
-                free(root->right);  free(root);
-                printf("inserting ");
-                insert(parent, newData);
-                printf("end\n");
+                if (parent->left == root)
+                    parent->left = root->right;
+                else
+                    parent->right = root->right;
+                free(root);
             }
-            printf("R(%d %d)  %x %x \n", parent->data, parent->right->data, parent->right->left, parent->right->right);
             return;
         } else if (root->right == NULL) {
             if (parent == NULL) root = root->left;
             else {
-                int newData = root->left->data;
-                free(root->left);  free(root);
-                printf("inserting ");
-                insert(parent, newData);
-                printf("end\n");
+                if (parent->left == root)
+                    parent->left = root->left;
+                else
+                    parent->right = root->left;
+                free(root);
             }
-            printf("L(%d %d)  %x %x \n", parent->data, parent->left->data, parent->left->left, parent->left->right);
             return;
         }
-        // �ڽĳ�尡 2���� ���
         else {
-            Tree* p_leftTree= root;
-            Tree* leftTree = root->left;
-            while (leftTree->right != NULL) {
-                p_leftTree = leftTree;
-                leftTree = leftTree->right;
+            Tree* leftNode, * rightNode;
+            leftNode = root->left;
+            while (leftNode->right != NULL) {
+                leftNode = leftNode->right;
             }
-            Tree* p_rightTree = root;
-            Tree* rightTree = root->right;
-            while (leftTree->left != NULL) {
-                p_rightTree = rightTree;
-                leftTree = leftTree->left;
+            rightNode = root->right;
+            while (rightNode->right != NULL) {
+                rightNode = rightNode->left;
             }
-            if (root - (leftTree->data) > abs((root - (rightTree->data)))) {
-                root->data = leftTree->data;
-                free(leftTree);
-                p_leftTree->right = NULL;
-            }else {
-                root->data = rightTree->data;
-                free(rightTree);
-                p_rightTree->left = NULL;
-            }
+            Tree* result = (root->data - leftNode->data) >= (rightNode->data - root->data) ? rightNode : leftNode;
+            root->data = result->data;
+            if (result == root->left)
+                root->left = result->left;
+            else
+                root->right = result->right;
+            free(result);
         }
     }
     else if (root->data > data) {
@@ -115,6 +109,6 @@ int main(){
     printf("is there 27??\n");
     search(root, 27);
 
-    delete(root, NULL, 31);
+    delete(root, NULL, 7);
     preOrder(root);
 }
