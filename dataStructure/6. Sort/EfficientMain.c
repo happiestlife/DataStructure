@@ -41,6 +41,6 @@ int main(){
 
     copy(arr, tmp);
     printf("<Merge Sort>\n");
-    mergeSort(tmp, 0, 3);
+    mergeSort(tmp, 0, MAX_SIZE-1);
     printArr(tmp);
 }
