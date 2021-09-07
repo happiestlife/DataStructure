@@ -51,3 +51,16 @@ void shellSort(int* arr){
         interval /= 2;
     }
 }
+
+void bubbleSort(int* arr, int size){
+    int tmp;
+    for(int i = 0; i < size; i++){
+        for(int j = 0; j < size-1-i; j++){
+            if(arr[j] > arr[j+1]){
+                tmp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = tmp;
+            }
+        }
+    }
+}

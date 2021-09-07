@@ -53,4 +53,9 @@ int main(){
     printf("<Shell Sort>\n");
     shellSort(tmp);
     printArr(tmp);
+
+    copy(arr, tmp);
+    printf("<Bubble Sort>\n");
+    bubbleSort(tmp, MAX_SIZE);
+    printArr(tmp);
 }
