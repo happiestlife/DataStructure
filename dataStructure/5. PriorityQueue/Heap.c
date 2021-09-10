@@ -23,6 +23,12 @@ void insert(Heap* heap, int data){
     }
 }
 
+void printHeap(Heap* heap) {
+    for (int i = 1; i < heap->size; i++)
+        printf("%d ", heap->heapData[i].data);
+    printf("\n");
+}
+
 void delete(Heap* heap){
     if (heap->size == 0) {
         printf("there is no data\n");
@@ -30,10 +36,10 @@ void delete(Heap* heap){
     }
     heap->heapData[1] = heap->heapData[heap->size--];
     int i = 1;
-    while (i * 2 <= heap->size && heap->heapData[i * 2].data > heap->heapData[i].data || heap->heapData[i * 2 + 1].data > heap->heapData[i].data) {
+    while (i * 2 + 1 <= heap->size && (heap->heapData[i * 2].data > heap->heapData[i].data || heap->heapData[i * 2 + 1].data > heap->heapData[i].data)) {
         if (heap->heapData[i * 2].data > heap->heapData[i * 2 + 1].data) {
             int tmp = heap->heapData[i].data;
-            heap->heapData[i].data = heap->heapData[i*2] .data;
+            heap->heapData[i].data = heap->heapData[i*2].data;
             heap->heapData[i*2].data = tmp;
             i = i * 2;
         }else{
@@ -43,12 +49,6 @@ void delete(Heap* heap){
             i = i * 2 + 1;
         }
     }
-}
-
-void printHeap(Heap* heap){
-    for(int i = 1; i < MAX_SIZE; i++)
-        printf("%d ", heap->heapData[i].data);
-    printf("\n");
 }
 
 int main(){
