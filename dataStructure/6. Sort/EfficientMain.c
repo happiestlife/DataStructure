@@ -19,12 +19,6 @@ void makeArr(int* arr){
     }
 }
 
-void printArr(int* arr) {
-    for (int i = 0; i < MAX_SIZE; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
-}
-
 void copy(int* arr, int* copied) {
     for (int i = 0; i < MAX_SIZE; i++)
         copied[i] = arr[i];
@@ -34,6 +28,7 @@ int main(){
     int arr[MAX_SIZE];
     int tmp[MAX_SIZE];
 
+    srand(1011111);
     makeArr(arr);
     printf("<Before Sorting>\n");
     printArr(arr);
@@ -42,5 +37,15 @@ int main(){
     copy(arr, tmp);
     printf("<Merge Sort>\n");
     mergeSort(tmp, 0, MAX_SIZE-1);
+    printArr(tmp);
+
+    copy(arr, tmp);
+    printf("<Quick Sort>\n");
+    quickSort(tmp, 0, MAX_SIZE - 1);
+    printArr(tmp);
+
+    copy(arr, tmp);
+    printf("<Heap Sort>\n");
+    heapSort(tmp);
     printArr(tmp);
 }
