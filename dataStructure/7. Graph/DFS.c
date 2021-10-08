@@ -9,7 +9,7 @@ typedef struct Edge {
 }Edge;
 
 typedef struct Vertice {
-    int type;
+    int num;
     char isVisited;
     struct Vertice* link;
     struct Edge* edgeLink;
@@ -25,15 +25,15 @@ void initGraph(LinkedGraph* linkedGraph) {
     linkedGraph->size = 0;
 }
 
-void insertVertice(LinkedGraph* linkedGraph, int type) {
+void insertVertice(LinkedGraph* linkedGraph, int num) {
     Vertice* newVertice = (Vertice*)malloc(sizeof(Vertice));
     if (!newVertice) {
         printf("memory assignment error\n");
         return;
     }
-    newVertice->type = type;
+    newVertice->num = num;
     newVertice->edgeLink = NULL;
-    newVertice->edgeLink = 0;
+    newVertice->isVisited = 0;
 
     if (linkedGraph->link == NULL) {
         linkedGraph->link = newVertice;
@@ -53,20 +53,20 @@ void insertEdge(LinkedGraph* linkedGraph, int from, int to) {
     }
     Vertice* fromVertice = linkedGraph->link;
     while (fromVertice) {
-        if (fromVertice->type == from)
+        if (fromVertice->num == from)
             break;
         fromVertice = fromVertice->link;
     }
 
     Vertice* toVertice = linkedGraph->link;
     while (toVertice) {
-        if (toVertice->type == to)
+        if (toVertice->num == to)
             break;
         toVertice = toVertice->link;
     }
 
     if (fromVertice == NULL) {
-        printf("There is no vertice whose type is %d\n", from);
+        printf("There is no vertice whose num is %d\n", from);
         return;
     }
     else {
@@ -90,25 +90,34 @@ void insertEdge(LinkedGraph* linkedGraph, int from, int to) {
 
 void printGraph(LinkedGraph* linkedGraph) {
     for (Vertice* i = linkedGraph->link; i; i = i->link) {
-        printf("Vertice type : %d\n", i->type);
+        printf("Vertice num : %d\n", i->num);
         for (Edge* j = i->edgeLink; j; j = j->link) {
-            printf("%d -> %d\n", i->type, j->dest->type);
+            printf("%d -> %d\n", i->num, j->dest->num);
         }
         printf("\n");
     }
 }
 
-void depthFirstSearch(Vertice* vertice) {
-    while (vertice) {
-        printf("%d ", vertice->type);
-        vertice->isVisited = 1;
-        if (!vertice->edgeLink->dest->isVisited)
-            depthFirstSearch(vertice->edgeLink->dest);
-        vertice = vertice->edgeLink;
+void dfs(Vertice* vertice) {
+    printf("%d\n", vertice->num);
+    vertice->isVisited++;
+
+    Edge* v = vertice->edgeLink;
+    while (v) {
+        if (!v->dest->isVisited)
+            dfs(v->dest);
+        v = v->link;
     }
-    printf("\n");
 }
 
+void depthFirstSearch(Vertice* vertice) {
+    while (vertice) {
+        if (!vertice->isVisited) {
+            dfs(vertice);
+        }
+        vertice = vertice->link;
+    }
+}
 
 int main() {
     LinkedGraph* graph = (LinkedGraph*)malloc(sizeof(LinkedGraph));
@@ -116,16 +125,16 @@ int main() {
     for (int i = 5; i >=0 ; i--)
         insertVertice(graph, i + 1);
 
-    insertEdge(graph, 1, 2);
     insertEdge(graph, 1, 4);
-    insertEdge(graph, 2, 1);
+    insertEdge(graph, 1, 2);
     insertEdge(graph, 2, 3);
-    insertEdge(graph, 3, 2);
+    insertEdge(graph, 2, 1);
     insertEdge(graph, 3, 4);
-    insertEdge(graph, 4, 1);
-    insertEdge(graph, 4, 3);
-    insertEdge(graph, 4, 5);
+    insertEdge(graph, 3, 2);
     insertEdge(graph, 4, 6);
+    insertEdge(graph, 4, 5);
+    insertEdge(graph, 4, 3);
+    insertEdge(graph, 4, 1);
     insertEdge(graph, 5, 4);
     insertEdge(graph, 6, 4);
 
