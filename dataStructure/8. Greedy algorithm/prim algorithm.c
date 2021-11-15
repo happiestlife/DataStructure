@@ -29,7 +29,7 @@ bool inResultCheck(int fromv, int tov) {
 	return true;
 }
 bool inVertex(int tov) {
-	for (int i = 0; i < vertex.size(); i++) 
+	for (int i = 0; i < vertex.size(); i++)
 		if (vertex[i] == tov) return false;
 	return true;
 }
@@ -37,7 +37,7 @@ bool inVertex(int tov) {
 bool prim() {
 	vertex.push_back(1);
 
-	while(vertex.size() < n) {
+	while (vertex.size() < n) {
 
 		// min heap 사용
 		for (int i = 0; i < vertex.size(); i++) {
@@ -45,27 +45,16 @@ bool prim() {
 			for (int j = 0; j < graph[checkedv].size(); j++) {
 				int incidentv = graph[checkedv][j].first;
 				int incidentw = graph[checkedv][j].second;
-				if(inResultCheck(checkedv, incidentv) && inVertex(incidentv)) incidentEdge.push(make_pair(make_pair(checkedv, incidentv), incidentw));
+				if (inResultCheck(checkedv, incidentv) && inVertex(incidentv)) incidentEdge.push(make_pair(make_pair(checkedv, incidentv), incidentw));
 			}
 		}
 		if (incidentEdge.size() == 0) return false;
 
-		pair<pair<int, int>, int> minEdge;
-		int fromv, tov;
-		bool inResult = false;
-		while (!incidentEdge.empty()) {
-			minEdge = incidentEdge.top();
-			fromv = minEdge.first.first;
-			tov = minEdge.first.second;
-			for (int i = 0; i < result.size(); i++) 
-				if (result[i].first == fromv && result[i].second == tov) inResult = true;
+		pair<pair<int, int>, int> minEdge = incidentEdge.top();
+		int fromv = minEdge.first.first;
+		int tov = minEdge.first.second;;
+		result.push_back(make_pair(fromv, tov));
 
-			if (!inResult) break;
-			else incidentEdge.pop();
-			inResult = false;
-		}
-		if(!inResult) result.push_back(make_pair(fromv, tov));
-		
 		bool fv = false, tv = false;
 		for (int i = 0; i < vertex.size(); i++) {
 			if (vertex[i] == fromv) fv = true;
@@ -90,7 +79,7 @@ int main(void) {
 	}
 
 	fscanf(fp, "%d %d", &n, &m);
-	for (int i = 0; i < m*2; i++) {
+	for (int i = 0; i < m * 2; i++) {
 		fscanf(fp, "%d %d %d", &u, &v, &w);
 		graph[u].push_back(make_pair(v, w));
 	}
