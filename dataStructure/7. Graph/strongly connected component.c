@@ -82,6 +82,19 @@ void dfs(int vindex) {
 }
 
 void scc() {
+
+	// graph reverse
+	reverse();
+
+	printf("\n--reversed--\n");
+	for (int i = 1; i <= n; i++) {
+		printf("%d : ", i);
+		for (int j = 0; j < rgraph[i].size(); j++)
+			printf("<%d, %d> ", i, rgraph[i][j]);
+		printf("\n");
+	}
+	printf("\n");
+
 	// reverseµÈ graphÀÇ dfs() 
 	for (int i = n; i >= 1; i--)
 		if (isVisited[i][0] == false)  rdfs(i);
@@ -116,17 +129,6 @@ int main(void) {
 			printf("<%d, %d> ", i, graph[i][j]);
 		printf("\n");
 	}
-
-	reverse();
-
-	printf("\n--reversed--\n");
-	for (int i = 1; i <= n; i++) {
-		printf("%d : ", i);
-		for (int j = 0; j < rgraph[i].size(); j++)
-			printf("<%d, %d> ", i, rgraph[i][j]);
-		printf("\n");
-	}
-	printf("\n");
 
 	scc();
 
